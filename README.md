@@ -155,18 +155,14 @@ In the interface, users can provide feedback by using two buttons to rate their 
 
 Refer to the ["Using the Application" section](#using-the-application) for examples on how to interact with the application.
 
-
-
 ### Ingestion
 
 The ingestion script is in [`ingest.py`](life_coach/ingest.py).
 
-Since we use an in-memory database, `minsearch`, as our
-knowledge base, we run the ingestion script at the startup
-of the application.
+We load the preindexed data from our experiments, stored in the [`data/dialog_index`](life_coach/data/dialog_index) folder. This ensures that the knowledge base is already populated and ready for efficient querying. The ingestion script is executed at the startup of the application and is called within [`rag.py`](life_coach/rag.py) upon import.
 
-It's executed inside [`rag.py`](fitness_assistant/rag.py)
-when we import it.
+Additionally, we utilize the embedding model `sentence-transformers/all-MiniLM-L6-v2` for generating embeddings, which are then indexed into our vector databases, **FAISS** and **Rank-BM25**. This setup allows for fast and accurate retrieval of relevant information.
+
 
 ## Experiments
 
@@ -232,58 +228,16 @@ The difference is minimal, so we opted for `gpt-4o-mini`.
 
 ## Monitoring
 
-We use Grafana for monitoring the application. 
+We use Grafana for monitoring the application, and it’s set up in the Docker-Compose configuration. While the Grafana instance is up and running, the dashboard setup is not fully completed yet.
 
-It's accessible at [localhost:3000](http://localhost:3000):
+Grafana is accessible at [localhost:3000](http://localhost:3000):
 
-- Login: "admin"
-- Password: "admin"
+- **Login:** "admin"
+- **Password:** "admin"
 
-### Dashboards
+The next steps involve completing the configuration of the dashboard to track key metrics and monitor the application's performance in real time.
 
-<p align="center">
-  <img src="images/dash.png">
-</p>
 
-The monitoring dashboard contains several panels:
-
-1. **Last 5 Conversations (Table):** Displays a table showing the five most recent conversations, including details such as the question, answer, relevance, and timestamp. This panel helps monitor recent interactions with users.
-2. **+1/-1 (Pie Chart):** A pie chart that visualizes the feedback from users, showing the count of positive (thumbs up) and negative (thumbs down) feedback received. This panel helps track user satisfaction.
-3. **Relevancy (Gauge):** A gauge chart representing the relevance of the responses provided during conversations. The chart categorizes relevance and indicates thresholds using different colors to highlight varying levels of response quality.
-4. **OpenAI Cost (Time Series):** A time series line chart depicting the cost associated with OpenAI usage over time. This panel helps monitor and analyze the expenditure linked to the AI model's usage.
-5. **Tokens (Time Series):** Another time series chart that tracks the number of tokens used in conversations over time. This helps to understand the usage patterns and the volume of data processed.
-6. **Model Used (Bar Chart):** A bar chart displaying the count of conversations based on the different models used. This panel provides insights into which AI models are most frequently used.
-7. **Response Time (Time Series):** A time series chart showing the response time of conversations over time. This panel is useful for identifying performance issues and ensuring the system's responsiveness.
-
-### Setting up Grafana
-
-All Grafana configurations are in the [`grafana`](grafana/) folder:
-
-- [`init.py`](grafana/init.py) - for initializing the datasource and the dashboard.
-- [`dashboard.json`](grafana/dashboard.json) - the actual dashboard (taken from LLM Zoomcamp without changes).
-
-To initialize the dashboard, first ensure Grafana is
-running (it starts automatically when you do `docker-compose up`).
-
-Then run:
-
-```bash
-pipenv shell
-
-cd grafana
-
-# make sure the POSTGRES_HOST variable is not overwritten 
-env | grep POSTGRES_HOST
-
-python init.py
-```
-
-Then go to [localhost:3000](http://localhost:3000):
-
-- Login: "admin"
-- Password: "admin"
-
-When prompted, keep "admin" as the new password.
 
 ## Background
 
