@@ -1,6 +1,4 @@
-FROM python:3.10-slim
-
-ENV PYTHONUNBUFFERED=1
+FROM python:3.12-slim
 
 WORKDIR /app
 
@@ -9,9 +7,14 @@ RUN pip install pipenv
 COPY data/daily_dialog.csv data/daily_dialog.csv
 COPY ["Pipfile", "Pipfile.lock", "./"]
 
-RUN pipenv install --deploy --ignore-pipfile --system
 
 COPY life_coach .
 
+RUN pipenv install --deploy --ignore-pipfile
 
-CMD ["streamlit", "run", "app.py"]
+
+
+CMD ["pipenv", "run", "streamlit", "run", "app.py"]  
+
+
+

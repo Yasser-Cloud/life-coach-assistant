@@ -156,7 +156,7 @@ def main():
                 f"Negative feedback received. New count: {st.session_state.count}"
             )
             save_feedback(st.session_state.conversation_id, -1)
-           print_log("Negative feedback saved to database")
+            print_log("Negative feedback saved to database")
 
     st.write(f"Current count: {st.session_state.count}")
 
