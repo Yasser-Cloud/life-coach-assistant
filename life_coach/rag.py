@@ -1,6 +1,6 @@
 import ingest
 from langchain_community.retrievers import BM25Retriever
-
+import torch
 import transformers 
 from transformers import pipeline
 import pandas as pd

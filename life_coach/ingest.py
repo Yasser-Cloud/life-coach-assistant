@@ -19,7 +19,7 @@ def load_index(data_path=DATA_PATH):
     docs = [Document(page_content=row.text,metadata={'id':idx,'emoji':row.emoji,'action':row.action }) for idx ,row in df.iterrows()]
     #vectorstore = FAISS.from_documents(docs, embeddings)
     #vector_store = FAISS.load_local(embeddings,faiss_index_path)
-    vector_db = FAISS.load_local(persist_directory, embeddings, allow_dangerous_deserialization=True)
+    vectorstore = FAISS.load_local(persist_directory, embeddings, allow_dangerous_deserialization=True)
 
 
     bm25_retriever = BM25Retriever.from_documents(docs)
