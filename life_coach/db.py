@@ -31,8 +31,6 @@ def init_db():
                     id TEXT PRIMARY KEY,
                     question TEXT NOT NULL,
                     answer TEXT NOT NULL,
-                    model_used TEXT NOT NULL,
-                    response_time FLOAT NOT NULL,
                     timestamp TIMESTAMP WITH TIME ZONE NOT NULL
                 )
             """)
@@ -48,32 +46,38 @@ def init_db():
     finally:
         conn.close()
 
-
-def save_conversation(conversation_id, question, answer_data, timestamp=None):
+def save_conversation(conversation_id, user_input, output,timestamp=None):
     if timestamp is None:
         timestamp = datetime.now(tz)
-
     conn = get_db_connection()
+
     try:
         with conn.cursor() as cur:
-            cur.execute(
-                """
-                INSERT INTO conversations 
-                (id, question, answer, model_used, response_time, timestamp)
-                VALUES ( %s, %s, %s, %s, %s, %s)
-                """,
-                (
-                    conversation_id,
-                    question,
-                    answer_data["answer"],
-                    answer_data["model_used"],
-                    answer_data["response_time"],
-                    timestamp
-                ),
-            )
+            # Check if the conversation already exists
+            cur.execute("SELECT COUNT(1) FROM conversations WHERE id = %s", (conversation_id,))
+            exists = cur.fetchone()[0] > 0
+
+            if exists:
+                # Update existing conversation
+                cur.execute(
+                    """
+                    UPDATE conversations
+                    SET question = %s, answer = %s , timestamp = %s
+                    WHERE id = %s
+                    """, (user_input, output,timestamp, conversation_id)
+                )
+            else:
+                # Insert new conversation
+                cur.execute(
+                    """
+                    INSERT INTO conversations (id, question, answer,timestamp)
+                    VALUES (%s, %s, %s,%s)
+                    """, (conversation_id, user_input, output,timestamp)
+                )
         conn.commit()
     finally:
         conn.close()
+
 
 
 def save_feedback(conversation_id, feedback, timestamp=None):
@@ -81,6 +85,7 @@ def save_feedback(conversation_id, feedback, timestamp=None):
         timestamp = datetime.now(tz)
 
     conn = get_db_connection()
+
     try:
         with conn.cursor() as cur:
             cur.execute(
@@ -147,12 +152,11 @@ def check_timezone():
             # Use py_time instead of tz for insertion
             cur.execute("""
                 INSERT INTO conversations 
-                (id, question, answer, model_used, response_time,  timestamp)
-                VALUES (%s, %s, %s, %s, %s, %s,)
+                (id, question, answer,   timestamp)
+                VALUES (%s, %s, %s, %s)
                 RETURNING timestamp;
             """, 
-            ('test', 'test question', 'test answer', 'test model', 0.0, 0.0, 
-             'test explanation', 0, 0, 0, 0, 0, 0, 0.0, py_time))
+            ('test', 'test question', 'test answer', py_time))
 
             inserted_time = cur.fetchone()[0]
             print(f"Inserted time (UTC): {inserted_time}")
