@@ -13,6 +13,7 @@ langchain-community = "*"
 transformers = "*"
 torch = "*"
 rank-bm25 = "*"
+accelerate = "*"
 
 [dev-packages]
 

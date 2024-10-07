@@ -10,8 +10,7 @@ COPY ["Pipfile", "Pipfile.lock", "./"]
 
 COPY life_coach .
 
-RUN pipenv install --deploy --ignore-pipfile
-
+RUN pipenv install --deploy --ignore-pipfile --system
 
 
 CMD ["pipenv", "run", "streamlit", "run", "app.py"]  
