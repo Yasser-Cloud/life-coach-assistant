@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-RUN pip install pipenv
+RUN pip install --no-cache-dir pipenv 
 
 COPY data/daily_dialog.csv data/daily_dialog.csv
 COPY ["Pipfile", "Pipfile.lock", "./"]
