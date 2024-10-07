@@ -54,13 +54,6 @@ You can find the data in [`data/daily_dialog`](data/daily_dialog).
 
 ## Preparation
 
-Since we use OpenAI, you need to provide the API key:
-
-1. Install `direnv`. If you use Ubuntu, run `sudo apt install direnv` and then `direnv hook bash >> ~/.bashrc`.
-2. Copy `.envrc_template` into `.envrc` and insert your key there.
-3. For OpenAI, it's recommended to create a new project and use a separate key.
-4. Run `direnv allow` to load the key into your environment.
-
 For dependency management, we use pipenv, so you need to install it:
 
 ```bash
@@ -87,34 +80,15 @@ First, run `postgres`:
 docker-compose up postgres
 ```
 
-Then run the [`db_prep.py`](fitness_assistant/db_prep.py) script:
+Then run the [`db_prep.py`](life_coach/db_prep.py) script:
 
 ```bash
 pipenv shell
 
-cd fitness_assistant
+cd life_coach
 
 export POSTGRES_HOST=localhost
 python db_prep.py
-```
-
-To check the content of the database, use `pgcli` (already
-installed with pipenv):
-
-```bash
-pipenv run pgcli -h localhost -U your_username -d course_assistant -W
-```
-
-You can view the schema using the `\d` command:
-
-```sql
-\d conversations;
-```
-
-And select from this table:
-
-```sql
-select * from conversations;
 ```
 
 ### Running with Docker-Compose
@@ -146,194 +120,46 @@ Now run the app on your host machine:
 ```bash
 pipenv shell
 
-cd fitness_assistant
+cd life_coach
 
 export POSTGRES_HOST=localhost
-python app.py
+streamlit run app.py
 ```
-
-### Running with Docker (without compose)
-
-Sometimes you might want to run the application in
-Docker without Docker Compose, e.g., for debugging purposes.
-
-First, prepare the environment by running Docker Compose
-as in the previous section.
-
-Next, build the image:
-
-```bash
-docker build -t fitness-assistant .
-```
-
-And run it:
-
-```bash
-docker run -it --rm \
-    --network="fitness-assistant_default" \
-    --env-file=".env" \
-    -e OPENAI_API_KEY=${OPENAI_API_KEY} \
-    -e DATA_PATH="data/data.csv" \
-    -p 5000:5000 \
-    fitness-assistant
-```
-
-### Time configuration
-
-When inserting logs into the database, ensure the timestamps are
-correct. Otherwise, they won't be displayed accurately in Grafana.
-
-When you start the application, you will see the following in
-your logs:
-
-```
-Database timezone: Etc/UTC
-Database current time (UTC): 2024-08-24 06:43:12.169624+00:00
-Database current time (Europe/Berlin): 2024-08-24 08:43:12.169624+02:00
-Python current time: 2024-08-24 08:43:12.170246+02:00
-Inserted time (UTC): 2024-08-24 06:43:12.170246+00:00
-Inserted time (Europe/Berlin): 2024-08-24 08:43:12.170246+02:00
-Selected time (UTC): 2024-08-24 06:43:12.170246+00:00
-Selected time (Europe/Berlin): 2024-08-24 08:43:12.170246+02:00
-```
-
-Make sure the time is correct.
-
-You can change the timezone by replacing `TZ` in `.env`.
-
-On some systems, specifically WSL, the clock in Docker may get
-out of sync with the host system. You can check that by running:
-
-```bash
-docker run ubuntu date
-```
-
-If the time doesn't match yours, you need to sync the clock:
-
-```bash
-wsl
-
-sudo apt install ntpdate
-sudo ntpdate time.windows.com
-```
-
-Note that the time is in UTC.
-
-After that, start the application (and the database) again.
-
 
 ## Using the application
 
 When the application is running, we can start using it.
-
-### CLI
-
-We built an interactive CLI application using
-[questionary](https://questionary.readthedocs.io/en/stable/).
-
-To start it, run:
+make sure that postgres service is up to store likes/dislikes
 
 ```bash
-pipenv run python cli.py
+docker-compose up postgres
 ```
-
-You can also make it randomly select a question from
-[our ground truth dataset](data/ground-truth-retrieval.csv):
-
 ```bash
-pipenv run python cli.py --random
+pipenv run streamlit run app.py
 ```
-
-### Using `requests`
-
-When the application is running, you can use
-[requests](https://requests.readthedocs.io/en/latest/)
-to send questions—use [test.py](test.py) for testing it:
-
-```bash
-pipenv run python test.py
-```
-
-It will pick a random question from the ground truth dataset
-and send it to the app.
-
-### CURL
-
-You can also use `curl` for interacting with the API:
-
-```bash
-URL=http://localhost:5000
-QUESTION="Is the Lat Pulldown considered a strength training activity, and if so, why?"
-DATA='{
-    "question": "'${QUESTION}'"
-}'
-
-curl -X POST \
-    -H "Content-Type: application/json" \
-    -d "${DATA}" \
-    ${URL}/question
-```
-
-You will see something like the following in the response:
-
-```json
-{
-    "answer": "Yes, the Lat Pulldown is considered a strength training activity. This classification is due to it targeting specific muscle groups, specifically the Latissimus Dorsi and Biceps, which are essential for building upper body strength. The exercise utilizes a machine, allowing for controlled resistance during the pulling action, which is a hallmark of strength training.",
-    "conversation_id": "4e1cef04-bfd9-4a2c-9cdd-2771d8f70e4d",
-    "question": "Is the Lat Pulldown considered a strength training activity, and if so, why?"
-}
-```
-
-Sending feedback:
-
-```bash
-ID="4e1cef04-bfd9-4a2c-9cdd-2771d8f70e4d"
-URL=http://localhost:5000
-FEEDBACK_DATA='{
-    "conversation_id": "'${ID}'",
-    "feedback": 1
-}'
-
-curl -X POST \
-    -H "Content-Type: application/json" \
-    -d "${FEEDBACK_DATA}" \
-    ${URL}/feedback
-```
-
-After sending it, you'll receive the acknowledgement:
-
-```json
-{
-    "message": "Feedback received for conversation 4e1cef04-bfd9-4a2c-9cdd-2771d8f70e4d: 1"
-}
-```
-
 ## Code
 
-The code for the application is in the [`fitness_assistant`](fitness_assistant/) folder:
+The code for the application is in the [`life_coach`](life_coach/) folder:
 
-- [`app.py`](fitness_assistant/app.py) - the Flask API, the main entrypoint to the application
-- [`rag.py`](fitness_assistant/rag.py) - the main RAG logic for building the retrieving the data and building the prompt
-- [`ingest.py`](fitness_assistant/ingest.py) - loading the data into the knowledge base
-- [`minsearch.py`](fitness_assistant/minsearch.py) - an in-memory search engine
-- [`db.py`](fitness_assistant/db.py) - the logic for logging the requests and responses to postgres
-- [`db_prep.py`](fitness_assistant/db_prep.py) - the script for initializing the database
-
-We also have some code in the project root directory:
-
-- [`test.py`](test.py) - select a random question for testing
-- [`cli.py`](cli.py) - interactive CLI for the APP
+- [`app.py`](life_coach/app.py) - the main entry point for the Streamlit application, responsible for the user interface and interaction.
+- [`rag.py`](life_coach/rag.py) - contains the main logic for Retrieval-Augmented Generation (RAG), building queries, retrieving data, and constructing prompts.
+- [`ingest.py`](life_coach/ingest.py) - responsible for loading data into the knowledge base, ensuring that the assistant has access to relevant information.
+- [`db.py`](life_coach/db.py) - manages the logic for logging requests and responses to a PostgreSQL database.
+- [`db_prep.py`](life_coach/db_prep.py) - initializes the database and sets up the necessary tables for storing interactions.
 
 ### Interface
 
-We use Flask for serving the application as an API.
+The application is built using Streamlit, which provides a user-friendly interface for interacting with the AI Life Coach Assistant. 
 
-Refer to the ["Using the Application" section](#using-the-application)
-for examples on how to interact with the application.
+In the interface, users can provide feedback by using two buttons to rate their experience. This rating is stored in the PostgreSQL database, allowing for ongoing improvements and adjustments based on user input.
+
+Refer to the ["Using the Application" section](#using-the-application) for examples on how to interact with the application.
+
+
 
 ### Ingestion
 
-The ingestion script is in [`ingest.py`](fitness_assistant/ingest.py).
+The ingestion script is in [`ingest.py`](life_coach/ingest.py).
 
 Since we use an in-memory database, `minsearch`, as our
 knowledge base, we run the ingestion script at the startup
