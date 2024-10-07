@@ -1,81 +1,56 @@
-# Fitness Assistant
-
-Note: I submitted this project too to see how many points it'd get
+# AI Life Coach Assistant
 
 <p align="center">
-  <img src="images/banner.jpg">
+  <img src="images/life_coach.webp">
 </p>
 
-Staying consistent with fitness routines is challenging,
-especially for beginners. Gyms can be intimidating, and personal
-trainers aren't always available.
+Staying motivated and maintaining a balanced life can be difficult, especially when juggling work, hobbies, and personal growth. Finding the right advice or activities to boost your mood isn't always easy, and professional life coaches aren't always accessible.
 
-The Fitness Assistant provides a conversational AI that helps
-users choose exercises and find alternatives, making fitness more
-manageable.
+The **AI Life Coach Assistant** offers a conversational AI that helps users get personalized advice, recommend activities for boosting happiness, and improve productivity. By providing suggestions on work, communication, lifestyle, and hobbies, it makes life coaching more accessible and enjoyable.
 
 This project was implemented for 
 [LLM Zoomcamp](https://github.com/DataTalksClub/llm-zoomcamp) -
-a free course about LLMs and RAG.
-
-<p align="center">
-  <img src="images/image.png">
-</p>
-
-To see a demo of the project and instructions on how to run it
-on github codespaces, check this video:
-
-
-<p align="center">
-  <a href="https://www.youtube.com/watch?v=RiQcSHzR8_E">
-    <img src="https://markdown-videos-api.jorgenkh.no/youtube/RiQcSHzR8_E">
-  </a>
-</p>
+a free course about LLMs and RAG."
 
 
 ## Project overview
 
-The Fitness Assistant is a RAG application designed to assist
-users with their fitness routines.
-
-The main use cases include:
-
-1. Exercise Selection: Recommending exercises based on the type
-of activity, targeted muscle groups, or available equipment.
-2. Exercise Replacement: Replacing an exercise with suitable
-alternatives.
-3. Exercise Instructions: Providing guidance on how to perform a
-specific exercise.
-4. Conversational Interaction: Making it easy to get information
-without sifting through manuals or websites.
+**AI Life Coach Assistant** is a virtual life coach designed to boost your mood, inspire productivity, and offer personalized advice across multiple areas of life. Whether you're seeking guidance in work, communication, hobbies, or lifestyle, this assistant will recommend enjoyable activities and tips to enhance your happiness and overall well-being. Through personalized suggestions, it aims to help users feel more fulfilled, motivated, and balanced.
 
 ## Dataset
 
-The dataset used in this project contains information about
-various exercises, including:
+The dataset used in this project is the [`DailyDialog dataset`](https://huggingface.co/datasets/li2017dailydialog/daily_dialog) from Hugging Face, which provides high-quality multi-turn dialog data for training conversational agents. The dataset includes:
 
-- **Exercise Name:** The name of the exercise (e.g., Push-Ups, Squats).
-- **Type of Activity:** The general category of the exercise (e.g., Strength, Mobility, Cardio).
-- **Type of Equipment:** The equipment needed for the exercise (e.g., Bodyweight, Dumbbells, Kettlebell).
-- **Body Part:** The part of the body primarily targeted by the exercise (e.g., Upper Body, Core, Lower Body).
-- **Type:** The movement type (e.g., Push, Pull, Hold, Stretch).
-- **Muscle Groups Activated:** The specific muscles engaged during
-the exercise (e.g., Pectorals, Triceps, Quadriceps).
-- **Instructions:** Step-by-step guidance on how to perform the
-exercise correctly.
+- **Dialog:** A list of strings representing conversations, useful for generating personalized advice and recommendations.
+- **Act:** A list of classification labels that define the type of dialog act, including:
+    - **dummy (0):** Placeholder value.
+    - **Inform (1):** Provides information.
+    - **Question (2):** Asks a question.
+    - **Directive (3):** Gives commands or suggestions.
+    - **Commissive (4):** Makes promises or commitments.
+- **Emotion:** A list of classification labels representing emotional tone, with possible values:
+    - **No emotion (0)**
+    - **Anger (1)**
+    - **Disgust (2)**
+    - **Fear (3)**
+    - **Happiness (4)**
+    - **Sadness (5)**
+    - **Surprise (6)**
 
-The dataset was generated using ChatGPT and contains 207 records. It serves as the foundation for the Fitness Assistant's exercise recommendations and instructional support.
+This dataset contains 11,118 training samples, which have been used to train the AI Life Coach Assistant in providing context-aware, emotionally responsive advice across various life scenarios.
 
-You can find the data in [`data/data.csv`](data/data.csv).
+You can find the data in [`data/daily_dialog`](data/daily_dialog).
 
 ## Technologies
 
-- Python 3.12
-- Docker and Docker Compose for containerization
-- [Minsearch](https://github.com/alexeygrigorev/minsearch) for full-text search
-- Flask as the API interface (see [Background](#background) for more information on Flask)
-- Grafana for monitoring and PostgreSQL as the backend for it
-- OpenAI as an LLM
+   - Python 3.12: Core programming language used for the project.
+   - Docker and Docker Compose: Used for containerization, ensuring a consistent environment across different systems.
+   - FAISS and Rank-BM25: Employed for efficient full-text search and similarity search to retrieve relevant information.
+   - Streamlit: Used for creating an interactive and user-friendly UI.
+   - Grafana (not fully implemented): Planned for monitoring, with PostgreSQL as the backend database. The implementation is incomplete due to Grafana's 5-chars restriction.
+   - sentence-transformers/all-MiniLM-L6-v2: Used for generating high-quality embeddings for semantic search.
+   - Qwen/Qwen2.5-0.5B (via Hugging Face): Utilized for answer generation, data creation, and evaluating answers.
+   - Langchain: Applied to handle LLM operations and chaining tasks for better context management in the system.
 
 ## Preparation
 
