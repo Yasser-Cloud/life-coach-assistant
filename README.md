@@ -206,25 +206,42 @@ Dense Search - using `FAISS` gave the following metrics:
 - MRR: 35%
 which is better than Sparse Search and Hyper Search
 
+so I used Dense Search and found his results better especially when the question was not explicitly in your data
 
 ### RAG flow evaluation
 
 We used the LLM-as-a-Judge metric to evaluate the quality
-of our RAG flow.
+of our RAG flow and the cosine similarity.
 
-For `gpt-4o-mini`, in a sample with 200 records, we had:
+for  rag_system_main.ipynb notebook
 
-- 167 (83%) `RELEVANT`
-- 30 (15%) `PARTLY_RELEVANT`
-- 3 (1.5%) `NON_RELEVANT`
+For `Qwen/Qwen2.5-0.5B-Instruct`, in a sample with 100 records, we had:
 
-We also tested `gpt-4o`:
+- 95 (95%) `PARTLY_RELEVANT`
+- 4 (4%) `RELEVANT`
+- 1 (1%) `NON_RELEVANT`
 
-- 168 (84%) `RELEVANT`
-- 30 (15%) `PARTLY_RELEVANT`
-- 2 (1%) `NON_RELEVANT`
+with cosine similarity, in a sample with 100 records, we had:
 
-The difference is minimal, so we opted for `gpt-4o-mini`.
+- 0.271979  `mean` 
+- 0.206015  `std`
+- 0.219197  `median`
+
+for  notebooks/rag_system_llm_truth notebook
+
+For `Qwen/Qwen2.5-0.5B-Instruct`, in a sample with 105 records, we had:
+
+- 98 (93%) `PARTLY_RELEVANT`
+- 6 (6%) `RELEVANT`
+- 1 (0.1%) `NON_RELEVANT`
+
+with cosine similarity, in a sample with 100 records, we had:
+
+- 0.349225  `mean` 
+- 0.203658  `std`
+- 0.341583  `median`
+
+The difference is minimal, so we opted for `Qwen/Qwen2.5-0.5B`.
 
 ## Monitoring
 
@@ -238,28 +255,10 @@ Grafana is accessible at [localhost:3000](http://localhost:3000):
 The next steps involve completing the configuration of the dashboard to track key metrics and monitor the application's performance in real time.
 
 
+## Acknowledgements
 
-## Background
+I would like to express my sincere gratitude to the creators and instructors of this amazing course. Your dedication, expertise, and passion for teaching have made learning about LLMs and Retrieval-Augmented Generation (RAG) an engaging and invaluable experience.
 
-Here we provide background on some tech not used in the
-course and links for further reading.
+A special thank you to the course organizers for creating a supportive learning environment. Your efforts have empowered me to dive deep into this fascinating field, and I truly appreciate all the hard work that went into making this course possible.
 
-### Flask
-
-We use Flask for creating the API interface for our application.
-It's a web application framework for Python: we can easily
-create an endpoint for asking questions and use web clients
-(like `curl` or `requests`) for communicating with it.
-
-In our case, we can send questions to `http://localhost:5000/question`.
-
-For more information, visit the [official Flask documentation](https://flask.palletsprojects.com/).
-
-
-## Acknowledgements 
-
-I thank the course participants for all your energy
-and positive feedback as well as the course sponsors for
-making it possible to run this course for free. 
-
-I hope you enjoyed doing the course =)
+Thank you for the knowledge, guidance, and inspiration throughout the journey!
