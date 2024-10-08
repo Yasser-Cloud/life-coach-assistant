@@ -185,37 +185,27 @@ We have the following notebooks:
 
     Note: Additional libraries such as matplotlib and seaborn will need to be installed to run this notebook, as they are not included in the Pipfile for a faster application build.
 
-  - [`rag_system_llm_truth.ipynb:`](notebooks/rag_system_llm_truth.ipynb) This notebook evaluates the RAG pipeline using one of the ground truths we created.
+  - [`rag_system_llm_truth.ipynb:`](notebooks/rag_system_llm_truth.ipynb) This notebook evaluates the RAG pipeline using one of the ground truths llm created.
 
   - [`rag_system_main.ipynb:`](notebooks/rag_system_main.ipynb) This notebook evaluates the system using the two most recent dialogs from the ground truth.
 
-Additionally, we perform three types of searches: vector search, keyword search, and hyperparameter search. For each type of search, we apply hit rate and MRR (Mean Reciprocal Rank) functions. We also use cosine similarity in addition to LLM evaluation to assess the RAG flow.
+Additionally, we perform three types of searches: vector search, keyword search, and hyper search. For each type of search, we apply hit rate and MRR (Mean Reciprocal Rank) functions. We also use cosine similarity in addition to LLM evaluation to assess the RAG flow.
 
 ### Retrieval evaluation
+for rag_system_main.ipynb with the two most recent dialogs from the ground truth.
+Sparse Search - using `rank-bm25` gave the following metrics:
 
-The basic approach - using `minsearch` without any boosting - gave the following metrics:
+- Hit rate: 79%
+- MRR: 74%
+which is better than Dense Search and Hyper Search
 
-- Hit rate: 94%
-- MRR: 82%
+for rag_system_llm_truth.ipynb with the ground truths llm created.
+Dense Search - using `FAISS` gave the following metrics:
 
-The improved version (with tuned boosting):
+- Hit rate: 55%
+- MRR: 35%
+which is better than Sparse Search and Hyper Search
 
-- Hit rate: 94%
-- MRR: 90%
-
-The best boosting parameters:
-
-```python
-boost = {
-    'exercise_name': 2.11,
-    'type_of_activity': 1.46,
-    'type_of_equipment': 0.65,
-    'body_part': 2.65,
-    'type': 1.31,
-    'muscle_groups_activated': 2.54,
-    'instructions': 0.74
-}
-```
 
 ### RAG flow evaluation
 
