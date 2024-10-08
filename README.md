@@ -177,7 +177,7 @@ pipenv run jupyter notebook
 
 We have the following notebooks:
 
-  - clean_creation_data.ipynb: This notebook includes the process of creating ground truth datasets for evaluating our RAG pipeline. We have two approaches for generating ground truth:
+  - [`clean_creation_data.ipynb:`](notebooks/clean_creation_data.ipynb) This notebook includes the process of creating ground truth datasets for evaluating our RAG pipeline. We have two approaches for generating ground truth:
 
       1-  A naive assumption where the last two sentences of a dialog are taken as a question and its answer.
 
@@ -185,9 +185,9 @@ We have the following notebooks:
 
     Note: Additional libraries such as matplotlib and seaborn will need to be installed to run this notebook, as they are not included in the Pipfile for a faster application build.
 
-  - rag_system_llm_truth.ipynb: This notebook evaluates the RAG pipeline using one of the ground truths we created.
+  - [`rag_system_llm_truth.ipynb:`](notebooks/rag_system_llm_truth.ipynb) This notebook evaluates the RAG pipeline using one of the ground truths we created.
 
-  - rag_system_main.ipynb: This notebook evaluates the system using the two most recent dialogs from the ground truth.
+  - [`rag_system_main.ipynb:`](notebooks/rag_system_main.ipynb) This notebook evaluates the system using the two most recent dialogs from the ground truth.
 
 Additionally, we perform three types of searches: vector search, keyword search, and hyperparameter search. For each type of search, we apply hit rate and MRR (Mean Reciprocal Rank) functions. We also use cosine similarity in addition to LLM evaluation to assess the RAG flow.
 
