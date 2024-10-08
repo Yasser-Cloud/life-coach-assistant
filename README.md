@@ -166,8 +166,7 @@ Additionally, we utilize the embedding model `sentence-transformers/all-MiniLM-L
 
 ## Experiments
 
-For experiments, we use Jupyter notebooks.
-They are in the [`notebooks`](notebooks/) folder.
+For experiments, we use Jupyter notebooks, which are located in the [`notebooks`](notebooks/) folder.
 
 To start Jupyter, run:
 
@@ -178,8 +177,19 @@ pipenv run jupyter notebook
 
 We have the following notebooks:
 
-- [`rag-test.ipynb`](notebooks/rag-test.ipynb): The RAG flow and evaluating the system.
-- [`evaluation-data-generation.ipynb`](notebooks/evaluation-data-generation.ipynb): Generating the ground truth dataset for retrieval evaluation.
+  - clean_creation_data.ipynb: This notebook includes the process of creating ground truth datasets for evaluating our RAG pipeline. We have two approaches for generating ground truth:
+
+      1-  A naive assumption where the last two sentences of a dialog are taken as a question and its answer.
+
+      2-  Using an LLM to extract questions and answers from dialogs, followed by cleaning the output.
+
+    Note: Additional libraries such as matplotlib and seaborn will need to be installed to run this notebook, as they are not included in the Pipfile for a faster application build.
+
+  - rag_system_llm_truth.ipynb: This notebook evaluates the RAG pipeline using one of the ground truths we created.
+
+  - rag_system_main.ipynb: This notebook evaluates the system using the two most recent dialogs from the ground truth.
+
+Additionally, we perform three types of searches: vector search, keyword search, and hyperparameter search. For each type of search, we apply hit rate and MRR (Mean Reciprocal Rank) functions. We also use cosine similarity in addition to LLM evaluation to assess the RAG flow.
 
 ### Retrieval evaluation
 
